@@ -49,8 +49,7 @@
 </template>
 
 <script setup lang="ts">
-import {IconEdit, IconPlus} from "@arco-design/web-vue/es/icon";
-import {ref} from "vue";
+import { IconEdit, IconPlus } from "@arco-design/web-vue/es/icon";
 
 /*const customRequest = async (option: any) => {
   const { onError, onSuccess, fileItem } = option;

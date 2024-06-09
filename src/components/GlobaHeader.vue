@@ -43,6 +43,7 @@ const router = useRouter();
 const loginUserStore = useLoginUserStore();
 // 当前选中的菜单项
 const selectKey = ref(["/"]);
+
 // 路由跳转时，自动更新选项中的菜单项（路由守卫）
 router.afterEach((to, from, failure) => {
   selectKey.value = [to.path];

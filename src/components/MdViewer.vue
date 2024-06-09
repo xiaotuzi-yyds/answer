@@ -5,7 +5,7 @@
 <script setup lang="ts">
 import highlight from "@bytemd/plugin-highlight";
 import { Viewer } from "@bytemd/vue-next";
-import { withDefaults, defineProps } from "vue";
+import { defineProps, withDefaults } from "vue";
 import gfm from "@bytemd/plugin-gfm";
 
 interface Props {

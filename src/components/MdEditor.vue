@@ -4,7 +4,7 @@
 
 <script>
 import gfm from "@bytemd/plugin-gfm";
-import { Editor, Viewer } from "@bytemd/vue-next";
+import { Editor } from "@bytemd/vue-next";
 
 const plugins = [
   gfm(),
