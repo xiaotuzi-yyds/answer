@@ -12,7 +12,7 @@
           disabled
         >
           <div class="titleBar">
-            <img src="../assets/logo.png" id="logo" />
+            <img src="@/assets/dada.png" id="logo" />
             <div class="title">答案说明所有</div>
           </div>
         </a-menu-item>
@@ -23,7 +23,30 @@
     </a-col>
     <a-col flex="100px">
       <div v-if="loginUserStore.loginUser.id">
-        {{ loginUserStore.loginUser.userName ?? "无名" }}
+        <a-popover position="br">
+          <a-avatar style="float: right; margin-right: 20px">
+            <img
+              alt="图片加载失败"
+              src="https://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/3ee5f13fb09879ecb5185e440cef6eb9.png~tplv-uwbnlip3yd-webp.webp"
+            />
+          </a-avatar>
+          <template #content>
+            <a-list :hoverable="true">
+              <a-list-item>
+                <icon-user />
+                个人账户
+              </a-list-item>
+              <a-list-item>
+                <icon-notification />
+                我的消息
+              </a-list-item>
+              <a-list-item @click="doLoginOut" style="color: red">
+                <icon-export />
+                退出登录
+              </a-list-item>
+            </a-list>
+          </template>
+        </a-popover>
       </div>
       <div v-else>
         <a-button type="primary" href="/user/login">登录</a-button>
@@ -61,8 +84,18 @@ const visibleRoutes = computed(() => {
     return true;
   });
 });
+/**
+ * 退出登录
+ * */
+const doLoginOut = async () => {
+  await loginUserStore.QuitLogin();
+  router.push({
+    path: "/",
+    replace: true, // 替换当前页。没必要点击后，又回到登录页
+  });
+};
 
-// 点击跳转
+// 菜单跳转
 const doMenuClick = (key: string) => {
   router.push({
     path: key,

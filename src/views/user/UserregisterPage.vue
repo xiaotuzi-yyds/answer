@@ -13,29 +13,17 @@
         tooltip="Please enter userAccount"
         label="账号"
       >
-        <a-input
-          v-model="form.userAccount"
-          placeholder="please enter your userAccount..."
-        />
+        <a-input v-model="form.userAccount" />
       </a-form-item>
       <a-form-item field="userPassword" tooltip="密码不小于8位" label="密码">
-        <a-input
-          v-model="form.userPassword"
-          placeholder="please enter your password..."
-        />
+        <a-input v-model="form.userPassword" />
       </a-form-item>
       <a-form-item
         field="checkPassword"
         tooltip="两次密码要一致"
         label="确认密码"
       >
-        <a-input
-          v-model="form.checkPassword"
-          placeholder="please true your password..."
-        />
-        <!--        <template #extra>
-                  <div>{{form.equal(form.userPassword)}}</div>
-                </template>-->
+        <a-input v-model="form.checkPassword" />
       </a-form-item>
       <a-form-item>
         <div

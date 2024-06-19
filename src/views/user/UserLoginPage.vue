@@ -13,16 +13,10 @@
         tooltip="Please enter userAccount"
         label="账号"
       >
-        <a-input
-          v-model="form.userAccount"
-          placeholder="please enter your userAccount..."
-        />
+        <a-input v-model="form.userAccount" />
       </a-form-item>
       <a-form-item field="userPassword" tooltip="密码不小于8位" label="密码">
-        <a-input
-          v-model="form.userPassword"
-          placeholder="please enter your post..."
-        />
+        <a-input v-model="form.userPassword" />
       </a-form-item>
       <a-form-item>
         <div
@@ -63,7 +57,6 @@ const form = reactive({
  * 登录提交
  * */
 const handleSubmit = async () => {
-  console.log(form);
   const res = await userLoginUsingPost(form);
   if (res.data.code === 0) {
     await loginUserStore.fetchLoginUser();

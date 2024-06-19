@@ -8,27 +8,28 @@
     @submit="doSearch"
   >
     <a-form-item
-      field="userName"
-      tooltip="Please enter userName"
-      label="用户名"
+      field="resultName"
+      tooltip="Please enter resultName"
+      label="结果名称"
     >
       <a-input
         allow-clear
-        v-model="formSearchParams.userName"
-        placeholder="请输入账号"
+        v-model="formSearchParams.resultName"
+        placeholder="请输入评分结果名"
       />
     </a-form-item>
     <a-form-item
-      field="userProfile"
-      tooltip="Please enter userName"
-      label="用户简介"
+      field="resultDesc"
+      tooltip="Please enter resultDesc"
+      label="结果描述"
     >
       <a-input
         allow-clear
-        v-model="formSearchParams.userProfile"
-        placeholder="请输入用户描述"
+        v-model="formSearchParams.resultDesc"
+        placeholder="请输入结果描述"
       />
     </a-form-item>
+
     <a-form-item>
       <a-button type="primary" html-type="submit" style="width: 100px"
         >搜索
@@ -46,8 +47,11 @@
     }"
     @page-change="pageChange"
   >
-    <template #userAvatar="{ record }">
+    <template #resultPicture="{ record }">
       <a-image width="64" :src="record.userAvatar" />
+    </template>
+    <template #resultProp="{ record }">
+      {{ record.resultProp }}
     </template>
     <template #createTime="{ record }">
       {{ dayjs(record.createTime).format("YYYY-MM-DD") }}
@@ -56,7 +60,6 @@
       {{ dayjs(record.updateTime).format("YYYY-MM-DD") }}
     </template>
     <template #optional="{ record }">
-      <!--<a-button type="primary" @click="doUpdate(record)">修改</a-button>-->
       <a-button status="danger" @click="doDelete(record)">删除</a-button>
     </template>
   </a-table>
@@ -64,13 +67,13 @@
 
 <script setup lang="ts">
 import { ref, watchEffect } from "vue";
-import {
-  deleteUserUsingPost,
-  listUserByPageUsingPost,
-} from "@/api/userController";
 import message from "@arco-design/web-vue/es/message";
 import API from "@/api";
 import { dayjs } from "@arco-design/web-vue/es/_utils/date";
+import {
+  deleteScoringResultUsingPost,
+  listScoringResultByPageUsingPost,
+} from "@/api/scoringResultController";
 
 const columns = [
   {
@@ -78,33 +81,33 @@ const columns = [
     dataIndex: "id",
   },
   {
-    title: "用户昵称",
-    dataIndex: "userName",
+    title: "结果名称",
+    dataIndex: "resultName",
   },
   {
-    title: "账号",
-    dataIndex: "userAccount",
+    title: "结果描述",
+    dataIndex: "resultDesc",
   },
   {
-    title: "用户头像",
-    dataIndex: "userAvatar",
-    slotName: "userAvatar",
+    title: "结果图片",
+    dataIndex: "resultPicture",
+    slotName: "resultPicture",
   },
   {
-    title: "用户简介",
-    dataIndex: "userProfile",
+    title: "结果属性集合（JSON）",
+    dataIndex: "resultProp",
   },
   {
-    title: "用户角色",
-    dataIndex: "userRole",
+    title: "结果得分范围",
+    dataIndex: "resultScoreRange",
   },
   {
-    title: "微信开放平台id",
-    dataIndex: "unionId",
+    title: "应用 ID",
+    dataIndex: "appId",
   },
   {
-    title: "公众号openId",
-    dataIndex: "mpOpenId",
+    title: "创建用户 ID",
+    dataIndex: "userId",
   },
   {
     title: "创建时间",
@@ -122,24 +125,24 @@ const columns = [
   },
 ];
 // 搜索条件
-const formSearchParams = ref<API.UserQueryRequest>({});
+const formSearchParams = ref<API.ScoringResultQueryRequest>({});
 // 默认搜索值
 const initSearcherParams = {
   current: 1,
   pageSize: 10,
 };
-const searchParams = ref<API.UserQueryRequest>({
+const searchParams = ref<API.ScoringResultQueryRequest>({
   ...initSearcherParams,
 });
 // 数据列表+数据总数
-const dataList = ref<API.User[]>([]);
+const dataList = ref<API.ScoringResult[]>([]);
 const total = ref<number>(0);
 
 /**
  * 加载数据
  * */
 const loadData = async () => {
-  const res = await listUserByPageUsingPost(searchParams.value);
+  const res = await listScoringResultByPageUsingPost(searchParams.value);
   console.log(res);
   if (res.data.code === 0) {
     dataList.value = res.data.data?.records || [];
@@ -160,8 +163,8 @@ const doSearch = async () => {
 /**
  * 删除
  * */
-const doDelete = async (record: API.User) => {
-  const res = await deleteUserUsingPost({
+const doDelete = async (record: API.ScoringResult) => {
+  const res = await deleteScoringResultUsingPost({
     id: record.id,
   });
   if (res.data.code === 0) {

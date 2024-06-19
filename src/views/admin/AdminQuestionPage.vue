@@ -7,28 +7,25 @@
     auto-label-width
     @submit="doSearch"
   >
-    <a-form-item
-      field="userName"
-      tooltip="Please enter userName"
-      label="用户名"
-    >
+    <a-form-item field="appId" tooltip="Please enter appId" label="应用id">
       <a-input
         allow-clear
-        v-model="formSearchParams.userName"
-        placeholder="请输入账号"
+        v-model="formSearchParams.appId"
+        placeholder="请输入应用id"
       />
     </a-form-item>
     <a-form-item
-      field="userProfile"
-      tooltip="Please enter userName"
-      label="用户简介"
+      field="questionContent"
+      tooltip="Please enter questionContent"
+      label="题目内容"
     >
       <a-input
         allow-clear
-        v-model="formSearchParams.userProfile"
-        placeholder="请输入用户描述"
+        v-model="formSearchParams.questionContent"
+        placeholder="请输入题目内容"
       />
     </a-form-item>
+
     <a-form-item>
       <a-button type="primary" html-type="submit" style="width: 100px"
         >搜索
@@ -46,8 +43,13 @@
     }"
     @page-change="pageChange"
   >
-    <template #userAvatar="{ record }">
-      <a-image width="64" :src="record.userAvatar" />
+    <template #questionContent="{ record }">
+      <div
+        v-for="question in JSON.parse(record.questionContent)"
+        :key="question.title"
+      >
+        {{ question }}
+      </div>
     </template>
     <template #createTime="{ record }">
       {{ dayjs(record.createTime).format("YYYY-MM-DD") }}
@@ -56,7 +58,6 @@
       {{ dayjs(record.updateTime).format("YYYY-MM-DD") }}
     </template>
     <template #optional="{ record }">
-      <!--<a-button type="primary" @click="doUpdate(record)">修改</a-button>-->
       <a-button status="danger" @click="doDelete(record)">删除</a-button>
     </template>
   </a-table>
@@ -64,13 +65,13 @@
 
 <script setup lang="ts">
 import { ref, watchEffect } from "vue";
-import {
-  deleteUserUsingPost,
-  listUserByPageUsingPost,
-} from "@/api/userController";
 import message from "@arco-design/web-vue/es/message";
 import API from "@/api";
 import { dayjs } from "@arco-design/web-vue/es/_utils/date";
+import {
+  deleteQuestionUsingPost,
+  listQuestionByPageUsingPost,
+} from "@/api/questionController";
 
 const columns = [
   {
@@ -78,33 +79,19 @@ const columns = [
     dataIndex: "id",
   },
   {
-    title: "用户昵称",
-    dataIndex: "userName",
+    title: "题目内容（json格式）",
+    dataIndex: "questionContent",
+    ellipsis: true,
+    tooltip: { position: "left" },
+    width: 100,
   },
   {
-    title: "账号",
-    dataIndex: "userAccount",
+    title: "应用 ID",
+    dataIndex: "appId",
   },
   {
-    title: "用户头像",
-    dataIndex: "userAvatar",
-    slotName: "userAvatar",
-  },
-  {
-    title: "用户简介",
-    dataIndex: "userProfile",
-  },
-  {
-    title: "用户角色",
-    dataIndex: "userRole",
-  },
-  {
-    title: "微信开放平台id",
-    dataIndex: "unionId",
-  },
-  {
-    title: "公众号openId",
-    dataIndex: "mpOpenId",
+    title: "创建用户 ID",
+    dataIndex: "userId",
   },
   {
     title: "创建时间",
@@ -122,24 +109,24 @@ const columns = [
   },
 ];
 // 搜索条件
-const formSearchParams = ref<API.UserQueryRequest>({});
+const formSearchParams = ref<API.QuestionQueryRequest>({});
 // 默认搜索值
 const initSearcherParams = {
   current: 1,
   pageSize: 10,
 };
-const searchParams = ref<API.UserQueryRequest>({
+const searchParams = ref<API.QuestionQueryRequest>({
   ...initSearcherParams,
 });
 // 数据列表+数据总数
-const dataList = ref<API.User[]>([]);
+const dataList = ref<API.Question[]>([]);
 const total = ref<number>(0);
 
 /**
  * 加载数据
  * */
 const loadData = async () => {
-  const res = await listUserByPageUsingPost(searchParams.value);
+  const res = await listQuestionByPageUsingPost(searchParams.value);
   console.log(res);
   if (res.data.code === 0) {
     dataList.value = res.data.data?.records || [];
@@ -160,8 +147,8 @@ const doSearch = async () => {
 /**
  * 删除
  * */
-const doDelete = async (record: API.User) => {
-  const res = await deleteUserUsingPost({
+const doDelete = async (record: API.Question) => {
+  const res = await deleteQuestionUsingPost({
     id: record.id,
   });
   if (res.data.code === 0) {

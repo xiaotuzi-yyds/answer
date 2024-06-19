@@ -1,11 +1,13 @@
-import axios, { AxiosInstance } from "axios";
+import axios, {AxiosInstance} from "axios";
 
+// 环境判断
+export const isDev = process.env.NODE_ENV === "development";
 const myAxios: AxiosInstance = axios.create({
-  baseURL: "http://localhost:8101",
-  timeout: 10000,
+  baseURL: isDev ? "http://localhost:8101" : "http://101.43.118.143:8101",
+  timeout: 60000,
   withCredentials: true, // 请求携带cookie
 });
-
+// todo 请求拦截限制
 // 添加全局请求拦截器
 myAxios.interceptors.request.use(
   function (config) {
@@ -18,7 +20,7 @@ myAxios.interceptors.request.use(
   }
 );
 
-// 添加全局响应拦截器
+// 添加全局响应拦截器，建议在响应拦截器就将所有错误拦截
 myAxios.interceptors.response.use(
   function (response) {
     // 2xx 范围内的状态码都会触发该函数。
@@ -26,7 +28,6 @@ myAxios.interceptors.response.use(
     return response;
   },
   function (error) {
-    // 超出 2xx 范围的状态码都会触发该函数。
     // 对响应错误做点什么
     return Promise.reject(error);
   }
